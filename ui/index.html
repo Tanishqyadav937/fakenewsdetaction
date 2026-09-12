@@ -11,42 +11,115 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-      /* Force Soft Organic Light Theme Overrides */
+      /* Force Soft Organic Light Theme & Blur Background Overrides */
       :root {
         --bg-primary: #FDFBF7 !important;
         --bg-cream: #FAF8F5 !important;
-        --surface-white: #FFFFFF !important;
+        --surface-white: rgba(255, 255, 255, 0.75) !important;
         --text-header: #2B2625 !important;
         --text-body: #6E6660 !important;
+        --accent-amber: #D97724 !important;
+        --accent-sage: #84A98C !important;
+        --accent-terracotta: #D96B6B !important;
       }
       html, body {
         background-color: #FAF8F5 !important;
         color: #2B2625 !important;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
       }
+      
+      /* Ambient Glowing Orbs behind glass cards */
+      .ambient-glow {
+        position: fixed !important;
+        border-radius: 50% !important;
+        filter: blur(100px) !important;
+        -webkit-filter: blur(100px) !important;
+        pointer-events: none !important;
+        z-index: 0 !important;
+        opacity: 0.65 !important;
+      }
+      .glow-1 { width: 550px !important; height: 550px !important; top: -120px !important; left: -100px !important; background: radial-gradient(circle, rgba(248, 165, 137, 0.35) 0%, transparent 70%) !important; }
+      .glow-2 { width: 650px !important; height: 650px !important; top: 20% !important; right: -150px !important; background: radial-gradient(circle, rgba(132, 169, 140, 0.32) 0%, transparent 70%) !important; }
+      .glow-3 { width: 550px !important; height: 550px !important; bottom: 5% !important; left: 15% !important; background: radial-gradient(circle, rgba(229, 169, 60, 0.28) 0%, transparent 70%) !important; }
+
+      /* Glassmorphic Backdrop Blur Throughout the Page */
       .sidebar {
-        background: rgba(253, 251, 247, 0.92) !important;
-        border-right: 1px solid rgba(43, 38, 37, 0.06) !important;
+        background: rgba(253, 251, 247, 0.78) !important;
+        backdrop-filter: blur(24px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.8) !important;
+        box-shadow: 0 10px 30px -10px rgba(180, 160, 140, 0.15) !important;
+        color: #2B2625 !important;
+      }
+      .topbar {
+        background: rgba(253, 251, 247, 0.75) !important;
+        backdrop-filter: blur(24px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.85) !important;
+        box-shadow: 0 10px 30px -10px rgba(180, 160, 140, 0.14) !important;
+      }
+      .glass-panel, .card-organic, .stat-card, .chart-card, .stream-card, .glass-card, .educate-intro, .quiz-box, .source-card, .fallacy-card, .dir-table-card, .results-card, .meta-card, .result-hero-banner {
+        background: rgba(255, 255, 255, 0.75) !important;
+        backdrop-filter: blur(20px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.85) !important;
+        box-shadow: 0 12px 35px -10px rgba(180, 160, 140, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
         color: #2B2625 !important;
       }
       .nav-link {
         color: #6E6660 !important;
       }
-      .nav-link.active, .nav-link:hover {
-        background: #FDF3E7 !important;
+      .nav-link.active, .nav-link:hover, .nav-item.active {
+        background: rgba(253, 243, 231, 0.9) !important;
+        backdrop-filter: blur(10px) !important;
         color: #D97724 !important;
       }
-      .glass-panel, .card-organic, .stat-card, .chart-card, .stream-card, .glass-card, .educate-intro, .quiz-box {
-        background: #FFFFFF !important;
-        border: 1px solid rgba(43, 38, 37, 0.06) !important;
-        box-shadow: 0 10px 30px -10px rgba(180, 160, 140, 0.15) !important;
+      .page-title, h1, h2, h3, h4, .stat-number, .stat-value, .brand-title {
         color: #2B2625 !important;
       }
-      .page-title, h1, h2, h3, h4, .stat-number, .brand-title {
-        color: #2B2625 !important;
-      }
-      .page-subtitle, p, .stat-label, .metric-lbl {
+      .page-subtitle, p, .stat-label, .stat-title, .metric-lbl {
         color: #6E6660 !important;
+      }
+
+      /* Light-Colored Badge UI System */
+      .top-metric-pill, .status-indicator, .stat-badge, .trust-badge, .trust-score, .prediction-badge, .verdict-badge, .quiz-streak-badge, .badge-code, .tag {
+        border-radius: 9999px !important;
+        font-weight: 700 !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        transition: all 0.3s ease !important;
+      }
+
+      /* Light Amber/Honey Badges */
+      .top-metric-pill, .status-indicator.checking, .stat-badge.positive, .trust-badge.medium, .trust-score.medium, .quiz-streak-badge {
+        background: rgba(245, 180, 80, 0.16) !important;
+        color: #9E5B10 !important;
+        border: 1px solid rgba(245, 180, 80, 0.35) !important;
+        box-shadow: 0 2px 8px rgba(245, 180, 80, 0.12) !important;
+      }
+
+      /* Light Sage Green Badges (Verified/High Trust) */
+      .top-metric-pill.highlight, .status-indicator.online, .stat-badge.neutral, .trust-badge.high, .trust-score.high, .prediction-badge.real, .verdict-badge.real {
+        background: rgba(132, 169, 140, 0.18) !important;
+        color: #235432 !important;
+        border: 1px solid rgba(132, 169, 140, 0.35) !important;
+        box-shadow: 0 2px 8px rgba(132, 169, 140, 0.12) !important;
+      }
+
+      /* Light Terracotta/Peach Badges (Flagged/Low Trust) */
+      .status-indicator.offline, .stat-badge.negative, .trust-badge.low, .trust-score.low, .prediction-badge.fake, .verdict-badge.fake {
+        background: rgba(235, 120, 120, 0.16) !important;
+        color: #B33030 !important;
+        border: 1px solid rgba(235, 120, 120, 0.32) !important;
+        box-shadow: 0 2px 8px rgba(235, 120, 120, 0.12) !important;
+      }
+
+      /* Light Category / Tag Badges */
+      .quiz-category-tag, .score-lbl, .badge-code {
+        background: rgba(140, 130, 220, 0.14) !important;
+        color: #4A3E85 !important;
+        border: 1px solid rgba(140, 130, 220, 0.28) !important;
+        padding: 4px 12px !important;
       }
     </style>
 </head>
