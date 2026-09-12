@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veritas AI — Fake News Detection API</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Organic Background Ambient Glows -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <!-- Dynamic Glassmorphic Floating Navigation -->
+    <header class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="brand-icon-wrapper">
+                    <span class="brand-icon">✨</span>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">Veritas AI</span>
+                    <span class="brand-subtitle">Authenticity Engine</span>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <div class="status-wrapper">
+                    <span id="apiStatus" class="status-indicator checking">Checking...</span>
+                </div>
+                <a href="#apiInfo" class="nav-link">API Spec</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <header class="hero section-reveal">
+            <div class="hero-badge">
+                <span class="badge-pulse"></span>
+                <span>Tactile AI Intelligence</span>
+            </div>
+            <h1 class="hero-title">
+                Effortless News Authenticity <span class="gradient-text">Verification</span>
+            </h1>
+            <p class="hero-subtitle">
+                Soothing, organic deep analysis for news content. Detect misinformation with immediate clarity, confidence metrics, and structural text breakdown.
+            </p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Section -->
+            <section class="input-section section-reveal">
+                <div class="card card-organic">
+                    <div class="card-header">
+                        <div class="section-title-group">
+                            <span class="section-icon">✍️</span>
+                            <div>
+                                <h2 class="section-title">Analyze News Article</h2>
+                                <p class="section-desc">Paste article text, rumor claims, or news snippets below</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="newsText" class="input-label">
+                            Article Text Content
+                        </label>
+                        <div class="textarea-wrapper">
+                            <textarea 
+                                id="newsText" 
+                                class="text-input" 
+                                placeholder="Paste news article content here...&#10;&#10;Example: 'Breaking: Scientists discover revolutionary energy source that eliminates power bills forever! Local authorities confirmed secret documents...'"
+                                rows="7"
+                            ></textarea>
+                            <div class="textarea-focus-border"></div>
+                        </div>
+                        <div class="input-footer">
+                            <div class="quick-tips">
+                                <span class="tip-dot"></span> Tip: Use <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to analyze quickly
+                            </div>
+                            <span id="charCount" class="char-count">0 characters</span>
+                        </div>
+                    </div>
+                    
+                    <div class="button-row">
+                        <button id="analyzeBtn" class="analyze-btn btn-magnetic ripple-container" type="button">
+                            <span class="btn-glow"></span>
+                            <span class="btn-icon">🚀</span>
+                            <span class="btn-text">Analyze Article</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section section-reveal">
+                <div id="resultsCard" class="card card-organic results-card hidden">
+                    <div class="card-header border-bottom-organic">
+                        <h2 class="section-title">
+                            <span class="section-icon">📊</span>
+                            Analysis Report
+                        </h2>
+                        <span class="result-badge-label">Real-time Verdict</span>
+                    </div>
+                    
+                    <!-- Loading State -->
+                    <div id="loadingState" class="loading-state hidden">
+                        <div class="liquid-spinner">
+                            <div class="spinner-ring"></div>
+                            <div class="spinner-ring"></div>
+                        </div>
+                        <p class="loading-text">Evaluating linguistic markers and structural authenticity...</p>
+                    </div>
+
+                    <!-- Results Content -->
+                    <div id="resultsContent" class="results-content hidden">
+                        <div class="result-hero-banner">
+                            <div id="predictionBadge" class="prediction-badge"></div>
+                            <div class="confidence-container">
+                                <span class="confidence-label">Confidence Score</span>
+                                <div id="confidenceScore" class="confidence-score"></div>
+                                <div class="confidence-bar-bg">
+                                    <div id="confidenceBarFill" class="confidence-bar-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="result-details">
+                            <div class="detail-item card-subtle">
+                                <span class="detail-label">AI Diagnostic Breakdown</span>
+                                <p id="analysisText" class="detail-value"></p>
+                            </div>
+                            
+                            <div class="result-meta-grid">
+                                <div class="meta-card">
+                                    <span class="meta-icon">📏</span>
+                                    <div>
+                                        <span class="meta-label">Text Volume</span>
+                                        <span id="textLength" class="meta-value">--</span>
+                                    </div>
+                                </div>
+                                <div class="meta-card">
+                                    <span class="meta-icon">🕒</span>
+                                    <div>
+                                        <span class="meta-label">Timestamp</span>
+                                        <span id="timestamp" class="meta-value">--</span>
+                                    </div>
+                                </div>
+                                <div class="meta-card">
+                                    <span class="meta-icon">⚡</span>
+                                    <div>
+                                        <span class="meta-label">Engine Latency</span>
+                                        <span class="meta-value">&lt; 15ms</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error State -->
+                    <div id="errorState" class="error-state hidden">
+                        <div class="error-badge">⚠️</div>
+                        <h3 class="error-title">Analysis Interrupted</h3>
+                        <p id="errorMessage" class="error-message"></p>
+                        <button id="retryBtn" class="retry-btn btn-magnetic ripple-container">
+                            <span class="btn-text">Try Again</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- API Info Section -->
+            <section id="apiInfo" class="api-info-section section-reveal">
+                <div class="card card-organic api-info">
+                    <div class="card-header">
+                        <h3 class="info-title">
+                            <span class="info-icon">⚙️</span>
+                            Developer Interface & API Specification
+                        </h3>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-pill">
+                            <span class="pill-label">Endpoint</span>
+                            <code class="code-pill">POST http://localhost:8080/detect</code>
+                        </div>
+                        <div class="info-pill">
+                            <span class="pill-label">Health Check</span>
+                            <code class="code-pill">GET http://localhost:8080/health</code>
+                        </div>
+                        <div class="info-pill">
+                            <span class="pill-label">Architecture</span>
+                            <span class="pill-value">Core Java HTTP Server + Gson JSON</span>
+                        </div>
+                    </div>
+                    
+                    <details class="api-details card-subtle">
+                        <summary class="ripple-container">
+                            <span>Inspect Payload Schemas & Examples</span>
+                            <span class="summary-arrow">↓</span>
+                        </summary>
+                        <div class="code-block">
+                            <div class="code-section">
+                                <span class="code-lang">POST Request Payload</span>
+                                <pre><code>{
+  "text": "Your news article content here..."
+}</code></pre>
+                            </div>
+                            
+                            <div class="code-section">
+                                <span class="code-lang">200 OK Response Schema</span>
+                                <pre><code>{
+  "prediction": "Fake" | "Real",
+  "confidence": 0.87,
+  "analysis": "Analysis explanation...",
+  "textLength": 150,
+  "timestamp": "Thu Sep 26 15:30:45 UTC 2024"
+}</code></pre>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </section>
+        </main>
+
+        <!-- Organic Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="footer-logo">✨ Veritas AI</span>
+                    <p class="footer-tagline">Soft, fluid, and transparent news verification</p>
+                </div>
+                <div class="footer-divider"></div>
+                <p class="copyright">&copy; 2026 Veritas AI Detection Engine | Built with Core Java & Pure Organic Web Design</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
