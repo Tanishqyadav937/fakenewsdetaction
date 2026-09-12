@@ -1,128 +1,155 @@
 /**
- * Veritas AI - Fake News Detection API Frontend JavaScript
- * Controls tactile interactions, fluid micro-animations, dynamic glassmorphism, and API state
+ * Veritas AI - Fact-Checking Dashboard JavaScript Router & Engines
  */
 
-class FakeNewsDetector {
+class VeritasDashboard {
     constructor() {
         this.API_BASE_URL = 'http://localhost:8080';
         this.isAnalyzing = false;
         
-        // Initialize DOM elements
+        // Quiz State
+        this.triviaQuestions = [
+            {
+                category: "SCIENCE & TECH",
+                headline: '"Breaking: New battery technology discovered using salt water charges smartphones in 3 seconds!"',
+                answer: "fake",
+                explanation: "Exaggerated claim. While sodium-ion salt batteries are researched, 3-second phone charging violates current physics and electrical safety limits."
+            },
+            {
+                category: "GLOBAL HEALTH",
+                headline: '"WHO publishes updated global air quality and health guidance for 2026."',
+                answer: "real",
+                explanation: "Authentic announcement from official WHO public health communications detailing updated air quality thresholds."
+            },
+            {
+                category: "FINANCE & CRYPTO",
+                headline: '"Government secretly signs executive order to ban all paper money starting midnight!"',
+                answer: "fake",
+                explanation: "Classic viral sensational conspiracy rumor. Currency policy changes require extensive public legislation and treasury notices."
+            },
+            {
+                category: "ASTRONOMY",
+                headline: '"NASA space telescope captures unprecedented high-resolution image of distant exoplanet atmosphere."',
+                answer: "real",
+                explanation: "Authentic scientific report based on Webb telescope spectrographic observations."
+            },
+            {
+                category: "ENVIRONMENT",
+                headline: '"Scientists confirm microplastics found in rainwater samples across remote polar ice caps."',
+                answer: "real",
+                explanation: "Verified environmental research published in peer-reviewed journals documenting global atmospheric microplastic transport."
+            }
+        ];
+        this.currentQuizIndex = 0;
+        this.quizScore = 0;
+
+        // Init App Engines
         this.initElements();
-        
-        // Bind core event listeners & interaction dynamics
-        this.bindEvents();
-        this.initScrollNavbar();
-        this.initScrollReveal();
-        this.initMagneticButtons();
+        this.initViewRouter();
+        this.initSidebarToggle();
         this.initRippleEffects();
-        
-        // Check API health status on load
+        this.initMagneticButtons();
+        this.initNewsScanner();
+        this.initTriviaEngine();
+        this.initDirectorySearch();
         this.checkApiHealth();
     }
 
-    /**
-     * Initialize DOM element references
-     */
     initElements() {
-        // Navigation & Layout
-        this.navbar = document.getElementById('navbar');
-        
-        // Input elements
+        this.sidebar = document.getElementById('sidebar');
+        this.sidebarToggle = document.getElementById('sidebarToggle');
+        this.pageTitle = document.getElementById('pageTitle');
+        this.pageSubtitle = document.getElementById('pageSubtitle');
+        this.apiStatus = document.getElementById('apiStatus');
+
+        // News Scanner Elements
         this.newsTextarea = document.getElementById('newsText');
         this.charCountSpan = document.getElementById('charCount');
         this.analyzeBtn = document.getElementById('analyzeBtn');
-        
-        // Results elements
         this.resultsCard = document.getElementById('resultsCard');
         this.loadingState = document.getElementById('loadingState');
         this.resultsContent = document.getElementById('resultsContent');
         this.errorState = document.getElementById('errorState');
-        
-        // Result content elements
         this.predictionBadge = document.getElementById('predictionBadge');
         this.confidenceScore = document.getElementById('confidenceScore');
         this.confidenceBarFill = document.getElementById('confidenceBarFill');
         this.analysisText = document.getElementById('analysisText');
         this.textLength = document.getElementById('textLength');
         this.timestamp = document.getElementById('timestamp');
-        
-        // Error elements
         this.errorMessage = document.getElementById('errorMessage');
         this.retryBtn = document.getElementById('retryBtn');
-        
-        // API status elements
-        this.apiStatus = document.getElementById('apiStatus');
     }
 
     /**
-     * Dynamic Glassmorphism Floating Nav contraction on scroll
+     * View Router for switching Dashboard Views
      */
-    initScrollNavbar() {
-        if (!this.navbar) return;
+    initViewRouter() {
+        const navItems = document.querySelectorAll('.nav-item[data-view]');
+        const viewSections = document.querySelectorAll('.view-section');
 
-        const handleScroll = () => {
-            if (window.scrollY > 25) {
-                this.navbar.classList.add('scrolled');
-            } else {
-                this.navbar.classList.remove('scrolled');
+        const viewMeta = {
+            dashboard: {
+                title: "Fact-Checking Dashboard",
+                subtitle: "Real-time media analysis, metrics, and fake news mitigation statistics."
+            },
+            scanner: {
+                title: "News Authenticity Scanner",
+                subtitle: "Deep learning NLP analysis to inspect articles and rumor claims."
+            },
+            trivia: {
+                title: "Veracity Trivia Challenge",
+                subtitle: "Test your headline verification skills against misinformation claims."
+            },
+            directory: {
+                title: "Verified Source Directory",
+                subtitle: "Editorial trust indices and bias ratings for international media outlets."
+            },
+            educate: {
+                title: "Educate & Spot Misinformation",
+                subtitle: "Key diagnostic rules and red flags to identify unverified claims."
             }
         };
 
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        handleScroll();
-    }
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const targetView = item.getAttribute('data-view');
 
-    /**
-     * Staggered Spring Entrance Animations on Scroll using IntersectionObserver
-     */
-    initScrollReveal() {
-        const revealElements = document.querySelectorAll('.section-reveal');
-        
-        if (!('IntersectionObserver' in window)) {
-            revealElements.forEach(el => el.classList.add('revealed'));
-            return;
-        }
+                // Update active nav button
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    // Stagger reveal animation slightly
-                    setTimeout(() => {
-                        entry.target.classList.add('revealed');
-                    }, index * 120);
-                    observer.unobserve(entry.target);
+                // Update visible view section
+                viewSections.forEach(section => {
+                    if (section.id === `view-${targetView}`) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+
+                // Update header text
+                if (viewMeta[targetView]) {
+                    this.pageTitle.textContent = viewMeta[targetView].title;
+                    this.pageSubtitle.textContent = viewMeta[targetView].subtitle;
+                }
+
+                // Close mobile sidebar if open
+                if (this.sidebar.classList.contains('open')) {
+                    this.sidebar.classList.remove('open');
                 }
             });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
         });
-
-        revealElements.forEach(el => observer.observe(el));
     }
 
     /**
-     * Soft Magnetic Pull effect on Hover for Buttons
+     * Responsive Sidebar Toggle
      */
-    initMagneticButtons() {
-        const magneticBtns = document.querySelectorAll('.btn-magnetic');
-        
-        magneticBtns.forEach(btn => {
-            btn.addEventListener('mousemove', (e) => {
-                const rect = btn.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                
-                // Gentle magnetic pull calculation
-                btn.style.transform = `translate3d(${x * 0.15}px, ${y * 0.15}px, 0) scale(1.02)`;
+    initSidebarToggle() {
+        if (this.sidebarToggle) {
+            this.sidebarToggle.addEventListener('click', () => {
+                this.sidebar.classList.toggle('open');
             });
-
-            btn.addEventListener('mouseleave', () => {
-                btn.style.transform = `translate3d(0, 0, 0) scale(1)`;
-            });
-        });
+        }
     }
 
     /**
@@ -144,98 +171,62 @@ class FakeNewsDetector {
             circle.classList.add('ripple-effect');
 
             const existingRipple = rippleTarget.querySelector('.ripple-effect');
-            if (existingRipple) {
-                existingRipple.remove();
-            }
+            if (existingRipple) existingRipple.remove();
 
             rippleTarget.appendChild(circle);
-
-            setTimeout(() => {
-                circle.remove();
-            }, 650);
+            setTimeout(() => circle.remove(), 650);
         });
     }
 
     /**
-     * Bind core event listeners
+     * Magnetic Button Hover Effect
      */
-    bindEvents() {
-        // Character count update & validation
+    initMagneticButtons() {
+        const magneticBtns = document.querySelectorAll('.btn-magnetic');
+        magneticBtns.forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                btn.style.transform = `translate3d(${x * 0.15}px, ${y * 0.15}px, 0) scale(1.02)`;
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = `translate3d(0, 0, 0) scale(1)`;
+            });
+        });
+    }
+
+    /**
+     * News Scanner Engine
+     */
+    initNewsScanner() {
+        if (!this.newsTextarea) return;
+
         this.newsTextarea.addEventListener('input', () => {
-            this.updateCharCount();
-            this.validateInput();
+            const text = this.newsTextarea.value;
+            const count = text.length;
+            this.charCountSpan.textContent = `${count} character${count !== 1 ? 's' : ''}`;
+            this.analyzeBtn.disabled = text.trim().length < 10 || this.isAnalyzing;
         });
 
-        // Analyze button click
         this.analyzeBtn.addEventListener('click', () => {
-            if (!this.isAnalyzing) {
+            if (!this.isAnalyzing) this.analyzeNews();
+        });
+
+        this.retryBtn.addEventListener('click', () => this.analyzeNews());
+
+        this.newsTextarea.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter' && !this.isAnalyzing) {
                 this.analyzeNews();
             }
         });
-
-        // Retry button click
-        this.retryBtn.addEventListener('click', () => {
-            this.analyzeNews();
-        });
-
-        // Ctrl+Enter shortcut in textarea
-        this.newsTextarea.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'Enter') {
-                if (!this.isAnalyzing) {
-                    this.analyzeNews();
-                }
-            }
-        });
     }
 
-    /**
-     * Update character count display
-     */
-    updateCharCount() {
-        const text = this.newsTextarea.value;
-        const count = text.length;
-        this.charCountSpan.textContent = `${count} character${count !== 1 ? 's' : ''}`;
-        
-        if (count < 10 && count > 0) {
-            this.charCountSpan.style.color = 'var(--accent-amber)';
-        } else if (count > 5000) {
-            this.charCountSpan.style.color = 'var(--accent-terracotta)';
-        } else {
-            this.charCountSpan.style.color = 'var(--text-body)';
-        }
-    }
-
-    /**
-     * Validate input and update button state
-     */
-    validateInput() {
-        const text = this.newsTextarea.value.trim();
-        const isValid = text.length >= 10;
-        
-        this.analyzeBtn.disabled = !isValid || this.isAnalyzing;
-        
-        const btnText = this.analyzeBtn.querySelector('.btn-text');
-        if (!isValid && text.length > 0) {
-            btnText.textContent = 'Text too short (min 10 chars)';
-        } else if (this.isAnalyzing) {
-            btnText.textContent = 'Analyzing content...';
-        } else {
-            btnText.textContent = 'Analyze Article';
-        }
-    }
-
-    /**
-     * Check API health status
-     */
     async checkApiHealth() {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 4000);
-
-            const response = await fetch(`${this.API_BASE_URL}/health`, {
-                method: 'GET',
-                signal: controller.signal
-            });
+            const response = await fetch(`${this.API_BASE_URL}/health`, { method: 'GET', signal: controller.signal });
             clearTimeout(timeoutId);
 
             if (response.ok) {
@@ -243,198 +234,153 @@ class FakeNewsDetector {
             } else {
                 this.setApiStatus('offline', '🔴 Server Error');
             }
-        } catch (error) {
+        } catch (e) {
             this.setApiStatus('offline', '🔴 Backend Offline');
-            console.warn('API health check info:', error.message);
         }
     }
 
-    /**
-     * Set API status indicator pill
-     */
     setApiStatus(status, text) {
         if (!this.apiStatus) return;
         this.apiStatus.className = `status-indicator ${status}`;
         this.apiStatus.textContent = text;
     }
 
-    /**
-     * Main analysis function
-     */
     async analyzeNews() {
         const text = this.newsTextarea.value.trim();
-        
-        if (!text || text.length < 10) {
-            this.showError('Please enter at least 10 characters of news text to analyze.');
-            return;
-        }
+        if (!text || text.length < 10) return;
 
         try {
             this.setAnalyzing(true);
-            this.showResults();
-            this.showLoading();
+            this.resultsCard.classList.remove('hidden');
+            this.loadingState.classList.remove('hidden');
+            this.resultsContent.classList.add('hidden');
+            this.errorState.classList.add('hidden');
 
             const response = await fetch(`${this.API_BASE_URL}/detect`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: text })
             });
 
-            if (!response.ok) {
-                let errorMessage = `Server returned ${response.status}`;
-                try {
-                    const errorData = await response.json();
-                    errorMessage = errorData.error || errorMessage;
-                } catch (e) {}
-                throw new Error(errorMessage);
-            }
-
+            if (!response.ok) throw new Error(`Server returned ${response.status}`);
             const result = await response.json();
-            
-            if (!this.validateApiResponse(result)) {
-                throw new Error('Invalid response format from API');
-            }
 
             this.displayResults(result);
             this.setApiStatus('online', '🟢 Backend Online');
-
         } catch (error) {
-            console.error('Analysis failed:', error);
-            let userMessage;
-            if (error.message.includes('fetch') || error.message.includes('Failed to fetch')) {
-                userMessage = 'Unable to connect to http://localhost:8080. Start the backend server via script (run.ps1) to analyze articles live.';
-                this.setApiStatus('offline', '🔴 Server Connection Failed');
-            } else {
-                userMessage = error.message;
-            }
-            this.showError(userMessage);
+            this.loadingState.classList.add('hidden');
+            this.errorState.classList.remove('hidden');
+            this.errorMessage.textContent = error.message.includes('fetch') 
+                ? 'Unable to connect to backend server at http://localhost:8080. Start the Core Java server via run.ps1 to analyze live.' 
+                : error.message;
         } finally {
             this.setAnalyzing(false);
         }
     }
 
-    /**
-     * Validate API response structure
-     */
-    validateApiResponse(response) {
-        return response && 
-               typeof response.prediction === 'string' &&
-               typeof response.confidence === 'number' &&
-               typeof response.analysis === 'string';
-    }
-
-    /**
-     * Set analyzing state
-     */
     setAnalyzing(analyzing) {
         this.isAnalyzing = analyzing;
-        this.validateInput();
-        
-        const btnIcon = this.analyzeBtn.querySelector('.btn-icon');
-        if (analyzing) {
-            btnIcon.textContent = '⏳';
-        } else {
-            btnIcon.textContent = '🚀';
-        }
+        this.analyzeBtn.disabled = analyzing;
+        const btnText = this.analyzeBtn.querySelector('.btn-text');
+        if (btnText) btnText.textContent = analyzing ? 'Analyzing...' : 'Analyze Article';
     }
 
-    /**
-     * Show results card and smooth scroll
-     */
-    showResults() {
-        this.resultsCard.classList.remove('hidden');
-        
-        setTimeout(() => {
-            this.resultsCard.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 100);
-    }
-
-    /**
-     * Show loading state
-     */
-    showLoading() {
-        this.loadingState.classList.remove('hidden');
-        this.resultsContent.classList.add('hidden');
-        this.errorState.classList.add('hidden');
-    }
-
-    /**
-     * Display analysis results with tactile animations
-     */
     displayResults(result) {
         this.loadingState.classList.add('hidden');
         this.errorState.classList.add('hidden');
         this.resultsContent.classList.remove('hidden');
 
-        const prediction = result.prediction.toLowerCase();
-        this.predictionBadge.className = `prediction-badge ${prediction}`;
-        
-        if (prediction === 'fake') {
-            this.predictionBadge.innerHTML = `🚨 High Risk: ${result.prediction} News`;
-        } else {
-            this.predictionBadge.innerHTML = `✅ Authenticated: ${result.prediction} News`;
-        }
+        const pred = result.prediction.toLowerCase();
+        this.predictionBadge.className = `prediction-badge ${pred}`;
+        this.predictionBadge.innerHTML = pred === 'fake' ? `🚨 High Risk: ${result.prediction} News` : `✅ Authenticated: ${result.prediction} News`;
 
-        const confidencePercent = Math.round(result.confidence * 100);
-        this.confidenceScore.textContent = `${confidencePercent}%`;
-        
-        // Animate confidence bar
+        const conf = Math.round(result.confidence * 100);
+        this.confidenceScore.textContent = `${conf}%`;
         if (this.confidenceBarFill) {
             this.confidenceBarFill.style.width = '0%';
-            setTimeout(() => {
-                this.confidenceBarFill.style.width = `${confidencePercent}%`;
-            }, 150);
+            setTimeout(() => this.confidenceBarFill.style.width = `${conf}%`, 100);
         }
 
         this.analysisText.textContent = result.analysis;
         this.textLength.textContent = `${result.textLength || this.newsTextarea.value.length} chars`;
-        
-        let displayTime = 'Just now';
-        if (result.timestamp) {
-            try {
-                const date = new Date(result.timestamp);
-                displayTime = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            } catch (e) {
-                displayTime = result.timestamp;
-            }
-        }
-        this.timestamp.textContent = displayTime;
-
-        // Fluid entrance curve
-        this.resultsContent.style.opacity = '0';
-        this.resultsContent.style.transform = 'translateY(15px)';
-        
-        setTimeout(() => {
-            this.resultsContent.style.transition = 'opacity 0.5s var(--ease-fluid), transform 0.5s var(--ease-fluid)';
-            this.resultsContent.style.opacity = '1';
-            this.resultsContent.style.transform = 'translateY(0)';
-        }, 50);
+        this.timestamp.textContent = 'Just now';
     }
 
     /**
-     * Show error state
+     * Trivia Quiz Engine
      */
-    showError(message) {
-        this.loadingState.classList.add('hidden');
-        this.resultsContent.classList.add('hidden');
-        this.errorState.classList.remove('hidden');
-        this.errorMessage.textContent = message;
-        
-        if (this.resultsCard.classList.contains('hidden')) {
-            this.showResults();
-        }
+    initTriviaEngine() {
+        const quizOptions = document.querySelectorAll('.quiz-opt-btn');
+        const feedbackBox = document.getElementById('quizFeedback');
+        const feedbackBadge = document.getElementById('feedbackBadge');
+        const feedbackText = document.getElementById('feedbackText');
+        const nextBtn = document.getElementById('nextQuizBtn');
+        const scoreSpan = document.getElementById('triviaScore');
+
+        const loadQuestion = () => {
+            const q = this.triviaQuestions[this.currentQuizIndex];
+            document.getElementById('quizCategory').textContent = q.category;
+            document.getElementById('quizNumber').textContent = `Question ${this.currentQuizIndex + 1} of ${this.triviaQuestions.length}`;
+            document.getElementById('quizHeadline').textContent = q.headline;
+            feedbackBox.classList.add('hidden');
+            quizOptions.forEach(btn => btn.disabled = false);
+        };
+
+        quizOptions.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const userAns = btn.getAttribute('data-answer');
+                const q = this.triviaQuestions[this.currentQuizIndex];
+                quizOptions.forEach(b => b.disabled = true);
+
+                if (userAns === q.answer) {
+                    this.quizScore++;
+                    feedbackBadge.textContent = "🎉 Correct Assessment!";
+                    feedbackBadge.style.color = "#3B6645";
+                } else {
+                    feedbackBadge.textContent = "❌ Incorrect Verdict";
+                    feedbackBadge.style.color = "#D96B6B";
+                }
+
+                feedbackText.textContent = q.explanation;
+                feedbackBox.classList.remove('hidden');
+                scoreSpan.textContent = `${this.quizScore} / ${this.triviaQuestions.length}`;
+            });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            this.currentQuizIndex = (this.currentQuizIndex + 1) % this.triviaQuestions.length;
+            loadQuestion();
+        });
+
+        loadQuestion();
+    }
+
+    /**
+     * Directory Search Engine
+     */
+    initDirectorySearch() {
+        const searchInput = document.getElementById('dirSearchInput');
+        const sourceCards = document.querySelectorAll('.source-card');
+
+        if (!searchInput) return;
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase().trim();
+            sourceCards.forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase();
+                const desc = card.textContent.toLowerCase();
+                if (name.includes(query) || desc.includes(query)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
     }
 }
 
-// Initialize on DOM ready
+// Initialize Dashboard on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('✨ Veritas AI Soft Organic Interface Initialized');
-    new FakeNewsDetector();
+    console.log('✨ Veritas AI Fact-Checking Dashboard Initialized');
+    new VeritasDashboard();
 });
-
-window.FakeNewsDetector = FakeNewsDetector;
