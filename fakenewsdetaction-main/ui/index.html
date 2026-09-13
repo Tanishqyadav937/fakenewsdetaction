@@ -23,7 +23,7 @@
         --accent-terracotta: #D96B6B !important;
       }
       html, body {
-        background-color: #FAF8F5 !important;
+        background-color: transparent !important; background: transparent !important;
         color: #2B2625 !important;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
       }
@@ -121,9 +121,76 @@
         border: 1px solid rgba(140, 130, 220, 0.28) !important;
         padding: 4px 12px !important;
       }
-    </style>
+    
+      
+      
+      /* Restore soft organic background on html/body */
+      html, body {
+        background-color: #FAF8F5 !important;
+        background: radial-gradient(circle at 5% 0%, rgba(248, 165, 137, 0.12) 0%, transparent 40%),
+                    radial-gradient(circle at 95% 35%, rgba(132, 169, 140, 0.12) 0%, transparent 45%),
+                    radial-gradient(circle at 50% 95%, rgba(229, 169, 60, 0.10) 0%, transparent 50%),
+                    #FAF8F5 !important;
+        color: #2B2625 !important;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+      }
+      
+      
+      
+      
+      
+      /* Centered Newspaper Background Card - Clean Fixed Settings (Blur 0px, Opacity 37%) */
+      .newspaper-bg-layer {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        pointer-events: none !important;
+        padding: 10px !important;
+      }
+      
+      .newspaper-bg-layer .bg-card {
+        position: relative !important;
+        width: 92% !important;
+        max-width: 1250px !important;
+        height: 88% !important;
+        max-height: 820px !important;
+        margin-left: 80px !important;
+        border-radius: 24px !important;
+        overflow: hidden !important;
+        opacity: 0.37 !important; /* Fixed at 37% as selected */
+        filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.08)) !important;
+        mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%) !important;
+        -webkit-mask-image: radial-gradient(circle at center, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%) !important;
+      }
+      
+      .newspaper-bg-layer .bg-img {
+        position: absolute !important;
+        inset: 0 !important;
+        background-image: url('newspaper_bg.png') !important;
+        background-size: cover !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
+        filter: none !important; /* Fixed at 0px blur */
+        -webkit-filter: none !important;
+        transform: scale(1.04) !important;
+      }
+</style>
 </head>
 <body>
+
+    <!-- Blurred Newspaper Background Layer -->
+    <!-- Centered & Semi-Transparent Blurred Newspaper Background -->
+    <div class="newspaper-bg-layer">
+        <div class="bg-card">
+            <div class="bg-img"></div>
+        </div>
+    </div>
+
     <!-- Organic Background Ambient Glows -->
     <div class="ambient-glow glow-1"></div>
     <div class="ambient-glow glow-2"></div>
@@ -663,5 +730,8 @@
 
     <!-- Core App Logic -->
     <script src="app.js?v=20260912_v3"></script>
+
+    
+
 </body>
 </html>
